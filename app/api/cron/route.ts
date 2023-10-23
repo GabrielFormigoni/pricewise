@@ -66,8 +66,10 @@ export async function GET(request: Request) {
             url: updatedProduct.url,
           };
           // Construct emailContent
-          const emailContentPromise = generateEmailBody(productInfo, "WELCOME");
-          const emailContent = await emailContentPromise;
+          const emailContent = await generateEmailBody(
+            productInfo,
+            emailNotifType
+          );
           // Get array of user emails
           const userEmails = updatedProduct.users.map(
             (user: any) => user.email
