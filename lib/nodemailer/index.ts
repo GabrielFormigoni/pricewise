@@ -1,9 +1,9 @@
-import nodemailer from "nodemailer";
+"use server";
+
 import { EmailContent, EmailProductInfo, NotificationType } from "@/types";
+import nodemailer from "nodemailer";
 
-export const THRESHOLD_PERCENTAGE = 40;
-
-export const Notification = {
+const Notification = {
   WELCOME: "WELCOME",
   CHANGE_OF_STOCK: "CHANGE_OF_STOCK",
   LOWEST_PRICE: "LOWEST_PRICE",
@@ -14,9 +14,11 @@ export async function generateEmailBody(
   product: EmailProductInfo,
   type: NotificationType
 ) {
+  const THRESHOLD_PERCENTAGE = 40;
+  // Shorten the product title
   const shortenedTitle =
     product.title.length > 20
-      ? `${product.title.slice(0, 20)}...`
+      ? `${product.title.substring(0, 20)}...`
       : product.title;
 
   let subject = "";
@@ -91,19 +93,17 @@ const transporter = nodemailer.createTransport({
 
 export const sendEmail = async (
   emailContent: EmailContent,
-  recipients: string[]
+  sendTo: string[]
 ) => {
   const mailOptions = {
     from: "gabrielformigoni23@outlook.com",
-    to: recipients,
+    to: sendTo,
     html: emailContent.body,
     subject: emailContent.subject,
   };
 
   transporter.sendMail(mailOptions, (error: any, info: any) => {
-    if (error) {
-      return console.log(error);
-    }
+    if (error) return console.log(error);
 
     console.log("Email sent: ", info);
   });
